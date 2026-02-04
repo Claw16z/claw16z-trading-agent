@@ -140,16 +140,67 @@ class TradingMonitor {
      */
     async getTrendingTokens() {
         try {
-            const response = await axios.get('https://api.dexscreener.com/latest/dex/tokens/trending', {
-                timeout: 10000
-            });
+            // Try multiple endpoints to get Solana tokens
+            let pairs = [];
             
-            if (!response.data?.pairs) {
+            // First try: trending endpoint
+            try {
+                const trendingResponse = await axios.get('https://api.dexscreener.com/latest/dex/tokens/trending', {
+                    timeout: 5000
+                });
+                if (trendingResponse.data?.pairs && Array.isArray(trendingResponse.data.pairs)) {
+                    pairs = trendingResponse.data.pairs;
+                }
+            } catch (e) {
+                console.log('⚠️ Trending endpoint returned no data, trying alternative...');
+            }
+            
+            // Fallback: get popular Solana tokens via pairs endpoint
+            if (pairs.length === 0 || !pairs.some(p => p.chainId === 'solana')) {
+                try {
+                    // Use popular Solana token addresses to get pairs
+                    const popularTokens = [
+                        'So11111111111111111111111111111111111111112', // SOL
+                        'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
+                        'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', // USDT
+                        '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // RAY
+                    ];
+                    
+                    // Try to get pairs for popular tokens
+                    for (const tokenAddress of popularTokens.slice(0, 2)) {
+                        try {
+                            const tokenResponse = await axios.get(`https://api.dexscreener.com/latest/dex/tokens/${tokenAddress}`, {
+                                timeout: 5000
+                            });
+                            if (tokenResponse.data?.pairs && Array.isArray(tokenResponse.data.pairs)) {
+                                const solanaPairs = tokenResponse.data.pairs
+                                    .filter(p => p.chainId === 'solana' && p.volume?.h24 > this.config.minVolume24h);
+                                pairs = pairs.concat(solanaPairs);
+                            }
+                        } catch (e) {
+                            // Continue to next token
+                        }
+                    }
+                    
+                    // Remove duplicates
+                    const seen = new Set();
+                    pairs = pairs.filter(p => {
+                        const key = p.pairAddress;
+                        if (seen.has(key)) return false;
+                        seen.add(key);
+                        return true;
+                    });
+                } catch (e) {
+                    console.log('⚠️ Fallback endpoint also failed:', e.message);
+                }
+            }
+            
+            if (!pairs || pairs.length === 0) {
                 return [];
             }
             
             // Process and filter tokens
-            return response.data.pairs
+            return pairs
                 .filter(pair => pair.chainId === 'solana')
                 .map(pair => ({
                     address: pair.baseToken.address,
