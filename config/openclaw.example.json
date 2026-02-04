@@ -1,0 +1,60 @@
+{
+  "name": "Claw16z Trading Agent",
+  "description": "Claw16z Trading Agent - AI agent configured for Solana trading",
+  "version": "1.0.0",
+  "ai": {
+    "provider": "anthropic",
+    "model": "claude-3-sonnet-20240229",
+    "apiKey": "YOUR_ANTHROPIC_API_KEY_HERE",
+    "temperature": 0.7,
+    "maxTokens": 4096
+  },
+  "workspace": {
+    "directory": "~/.openclaw/workspace",
+    "autoSave": true,
+    "backupInterval": "1h"
+  },
+  "trading": {
+    "enabled": true,
+    "walletPath": "~/.openclaw/workspace/solana-wallet.json",
+    "rpcUrl": "https://api.mainnet-beta.solana.com",
+    "network": "mainnet-beta",
+    "maxPositionSize": 50,
+    "riskLevel": "medium",
+    "strategies": ["momentum", "breakout"],
+    "blacklist": ["SCAM", "MEME", "INU", "DOGE", "FLOKI"]
+  },
+  "monitoring": {
+    "enabled": true,
+    "interval": 30,
+    "sources": ["dexscreener", "jupiter"],
+    "alerts": {
+      "profitThreshold": 20,
+      "lossThreshold": 10,
+      "volumeThreshold": 100000
+    }
+  },
+  "security": {
+    "encryptWallet": false,
+    "requireConfirmation": true,
+    "maxDailyLoss": 100,
+    "emergencyStopLoss": 25
+  },
+  "notifications": {
+    "telegram": {
+      "enabled": false,
+      "botToken": "YOUR_TELEGRAM_BOT_TOKEN",
+      "chatId": "YOUR_CHAT_ID"
+    },
+    "discord": {
+      "enabled": false,
+      "webhookUrl": "YOUR_DISCORD_WEBHOOK"
+    }
+  },
+  "logging": {
+    "level": "info",
+    "file": "~/.openclaw/logs/trading.log",
+    "maxSize": "10MB",
+    "backups": 5
+  }
+}

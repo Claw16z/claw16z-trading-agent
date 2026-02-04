@@ -1,0 +1,29 @@
+{
+  "name": "claw16z-trading-agent",
+  "version": "1.0.0",
+  "description": "Claw16z Trading Agent - Solana trading bot with Jupiter integration",
+  "main": "monitor.js",
+  "scripts": {
+    "start": "node monitor.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "solana",
+    "trading",
+    "jupiter",
+    "claw16z",
+    "defi",
+    "dex"
+  ],
+  "author": "Claw16z Team",
+  "license": "MIT",
+  "dependencies": {
+    "@solana/web3.js": "^1.87.6",
+    "@solana/spl-token": "^0.4.1",
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
