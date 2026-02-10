@@ -1,14 +1,14 @@
 # Claw16z Trading Agent
 
-A dead-simple quickstart that takes you from zero to having an AI agent with a funded Solana wallet, ready to trade autonomously.
+A dead-simple quickstart that takes you from zero to having an AI agent with a funded EVM wallet on Base, ready to trade autonomously.
 
 ## What is this?
 
-**Claw16z Trading Agent** is an AI agent platform that can act autonomously on your behalf. This repository sets up a Claw16z Trading Agent with a Solana wallet so it can trade tokens automatically.
+**Claw16z Trading Agent** is an AI agent platform that can act autonomously on your behalf. This repository sets up a Claw16z Trading Agent with an EVM wallet on Base so it can trade tokens automatically.
 
 The flow is simple:
-1. The agent gets a Solana keypair 
-2. You fund it with SOL (for gas) and USDC (for trading)
+1. The agent gets an EVM wallet address on Base  
+2. You fund it with ETH (for gas) and USDC (for trading)
 3. The agent scans for trading opportunities and executes swaps
 
 Think: **clone, configure, fund, go.**
@@ -23,7 +23,7 @@ Think: **clone, configure, fund, go.**
 
 ```bash
 # Clone this repository
-git clone https://github.com/solana-clawd/claw16z-trading-agent.git
+git clone https://github.com/Claw16z/claw16z-trading-agent.git
 cd claw16z-trading-agent
 
 # Install OpenClaw
@@ -32,11 +32,11 @@ npm install -g openclaw
 # Run the setup wizard (creates your agent workspace)
 openclaw onboard
 
-# Create a Solana wallet for your agent
+# Create an EVM wallet for your agent (managed by OpenClaw)
 chmod +x setup.sh
 ./setup.sh
 # Output: Your agent's wallet address is: <address>
-#         Fund this address with SOL and USDC to start trading.
+#         Fund this address with ETH (on Base) and USDC to start trading.
 
 # Fund your agent's wallet (see next section)
 chmod +x fund-wallet.sh
@@ -54,11 +54,11 @@ cd trading && node monitor.js
 Your agent needs funds to trade. The setup script will show you the wallet address (public key).
 
 ### Recommended starting amounts:
-- **0.1 SOL** (for transaction fees)
+- **0.01–0.05 ETH** on Base (for transaction fees)
 - **$50 USDC** (for trading)
 
 ### How to fund:
-1. Send SOL and USDC to the wallet address shown by `setup.sh`
+1. Send ETH (on Base) and USDC to the wallet address shown by `setup.sh`
 2. Run `./fund-wallet.sh` to check balances and wait for funding confirmation
 
 ```bash
@@ -66,10 +66,10 @@ Your agent needs funds to trade. The setup script will show you the wallet addre
 ./fund-wallet.sh
 ```
 
-Once funded, the script will show:
+Once funded, the script will show (example values):
 ```
 ✅ Funded! Ready to trade.
-SOL Balance: 0.1
+ETH Balance: 0.05
 USDC Balance: 50.00
 ```
 
@@ -80,7 +80,7 @@ USDC Balance: 50.00
 cd trading
 
 # Configure your trading parameters (optional)
-export RPC_URL="https://api.mainnet-beta.solana.com"  # Or use Helius for better performance
+export RPC_URL="https://mainnet.base.org"
 export POSITION_SIZE="10"  # USDC per trade
 export MIN_LIQUIDITY="100000"  # Minimum pool liquidity
 
@@ -89,10 +89,10 @@ node monitor.js
 ```
 
 The trading bot will:
-- Scan DexScreener for trending tokens
+- Scan DexScreener for trending tokens on Base
 - Look for momentum opportunities
-- Execute swaps via Jupiter
-- Manage position sizes and exits
+- Simulate swaps via Uniswap (DRY_RUN mode by default)
+- Manage position sizes and exits (simulated)
 
 ### How the Strategy Works
 
@@ -108,8 +108,8 @@ The trading bot will:
 Edit these environment variables in `trading/.env`:
 
 ```bash
-# RPC Configuration
-RPC_URL=https://api.mainnet-beta.solana.com
+# RPC Configuration (Base mainnet)
+RPC_URL=https://mainnet.base.org
 
 # Trading Settings
 POSITION_SIZE=10          # USDC per trade
@@ -134,21 +134,21 @@ cp config/AGENTS.md ~/.openclaw/workspace/AGENTS.md
 ## Architecture
 
 ```
-Claw16z Trading Agent → Reads keypair → Scans opportunities → Executes swaps via Jupiter
+Claw16z Trading Agent → Reads EVM wallet → Scans opportunities → Simulates swaps via Uniswap
        ↓
-   Solana Wallet
-   (SOL + USDC)
+   EVM Wallet on Base
+   (ETH + USDC)
        ↓
-   Jupiter DEX
-   (Swap execution)
+   Uniswap DEX (Base)
+   (Swap execution / simulation)
 ```
 
 ### Components:
 
 - **Claw16z Trading Agent**: The AI that makes trading decisions
-- **Solana Wallet**: Stores SOL (gas) and USDC (trading capital)
+- **EVM Wallet (Base)**: Stores ETH (gas) and USDC (trading capital)
 - **Trading Monitor**: Scans markets and identifies opportunities
-- **Jupiter Integration**: Executes token swaps
+- **Uniswap Integration (planned)**: Executes token swaps on Base (currently simulated)
 - **DexScreener API**: Provides market data and trending tokens
 
 ## Security
@@ -169,7 +169,7 @@ npm install -g openclaw
 Note: Claw16z Trading Agent uses OpenClaw as the underlying platform.
 
 **"Insufficient funds for transaction"**
-- Check your SOL balance for gas fees
+- Check your ETH balance on Base for gas fees
 - Ensure you have enough USDC for trading
 
 **"RPC rate limiting"**
@@ -183,8 +183,7 @@ Note: Claw16z Trading Agent uses OpenClaw as the underlying platform.
 ### Getting Help
 
 - [OpenClaw Documentation](https://docs.openclaw.com) (Claw16z Trading Agent uses OpenClaw platform)
-- [Jupiter API Docs](https://station.jup.ag/docs)
-- [Solana Web3.js Guide](https://solana-labs.github.io/solana-web3.js/)
+- [Uniswap Docs](https://docs.uniswap.org/)
 
 ## License
 

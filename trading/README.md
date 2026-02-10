@@ -22,9 +22,9 @@ The main trading loop that:
 - Logs all trades and maintains position state
 
 ### swap.js  
-Swap integration helper (currently used only for non-`DRY_RUN` modes and still Solana/Jupiter-specific).
+Legacy Solana/Jupiter swap helper (not required for Base `DRY_RUN` mode).
 For **Base** the bot is intended to run in `DRY_RUN=true` mode, simulating entries and exits
-without sending real transactions. A dedicated Base DEX integration can be added here later.
+without sending real transactions. A dedicated Base DEX / Uniswap integration can be added here later.
 
 ## Configuration
 
@@ -134,7 +134,7 @@ function isGoodEntry(token) {
 
 Replace DexScreener with other APIs:
 - CoinGecko
-- Jupiter API
+- Uniswap / other Base DEX APIs
 - Birdeye
 - Custom on-chain analysis
 
@@ -152,7 +152,7 @@ Consider adding:
 ### Common Issues
 
 **"Insufficient funds"**
-- Check SOL balance for gas fees
+- Check ETH balance on Base for gas fees
 - Verify USDC balance for trading
 
 **"Transaction failed"**

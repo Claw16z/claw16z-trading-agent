@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
+// Legacy swap helper (Solana/Jupiter); for Base we simulate swaps in DRY_RUN mode
 const JupiterSwap = require('./swap');
 
 class TradingMonitor {
@@ -161,7 +162,7 @@ class TradingMonitor {
                 try {
                     // Use popular Base token addresses to get pairs
                     const popularTokens = [
-                        // SOL on Base (DexScreener \"Solana\" token on Base)
+                        // SOL on Base (DexScreener \"Solana\"-named token on Base)
                         '0x311935Cd80B76769bF2ecC9D8Ab7635b2139cf82',
                         // USDC on Base
                         '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
@@ -278,8 +279,8 @@ class TradingMonitor {
                     dryRun: true
                 };
             } else {
-                // NOTE: Non-DRY_RUN execution is still Solana/Jupiter-specific in swap.js
-                // and would need a dedicated Base DEX integration to perform real trades.
+                // NOTE: Non-DRY_RUN execution is still legacy Solana/Jupiter-specific in swap.js
+                // and would need a dedicated Uniswap/Base DEX integration to perform real trades.
                 result = await this.swapper.swap(
                     'USDC',
                     token.address,
@@ -453,7 +454,7 @@ class TradingMonitor {
      * Check wallet balances
      */
     async checkBalance() {
-        // This would check SOL and USDC balances
+        // This would check ETH and USDC balances on Base
         // Implementation depends on your wallet setup
         console.log('💳 Balance check - implement wallet balance checking');
     }

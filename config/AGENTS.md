@@ -69,7 +69,7 @@ Exit positions when:
 
 ### Risk Assessment
 Before each trade, verify:
-- Sufficient SOL balance for gas fees
+- Sufficient ETH balance on Base for gas fees
 - USDC balance covers position size
 - Position won't exceed risk limits
 - Token has sufficient liquidity for exit

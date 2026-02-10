@@ -55,15 +55,15 @@ echo "📁 Setting up workspace at ${WORKSPACE_DIR}..."
 mkdir -p "$WORKSPACE_DIR"
 
 # Install dependencies first (needed for wallet generation and address extraction)
-echo "📦 Installing Solana dependencies..."
+echo "📦 Installing wallet dependencies..."
 if [ ! -d "node_modules/@solana/web3.js" ]; then
     npm install --silent @solana/web3.js @solana/spl-token 2>/dev/null
 fi
 echo -e "${GREEN}✅ Dependencies installed${NC}"
 echo
 
-# Generate Solana keypair
-echo "🔑 Generating Solana wallet keypair..."
+# Generate agent wallet keypair (used as managed EVM wallet identity)
+echo "🔑 Generating trading wallet keypair..."
 WALLET_FILE="$WORKSPACE_DIR/solana-wallet.json"
 
 if [ -f "$WALLET_FILE" ]; then
@@ -112,12 +112,5 @@ echo "2. Run: ./fund-wallet.sh (to check funding status)"
 echo "3. Run: cd trading && npm install && node monitor.js"
 echo
 
-# Check if Solana CLI is available and configure it
-if command -v solana &> /dev/null; then
-    echo -e "${GREEN}✅ Solana CLI detected - configuring...${NC}"
-    solana config set --keypair "$WALLET_FILE" --url https://api.mainnet-beta.solana.com
-    echo "Solana CLI configured to use your agent's wallet"
-    echo
-fi
-
-echo -e "${GREEN}🎉 Your Claw16z Trading Agent is ready to be funded!${NC}"
+# Note: This keypair is managed by OpenClaw and used as the agent's wallet identity.
+echo -e "${GREEN}🎉 Your Claw16z Trading Agent wallet is ready to be funded!${NC}"

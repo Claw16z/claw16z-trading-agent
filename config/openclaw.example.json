@@ -1,6 +1,6 @@
 {
   "name": "Claw16z Trading Agent",
-  "description": "Claw16z Trading Agent - AI agent configured for Solana trading",
+  "description": "Claw16z Trading Agent - AI agent configured for Base (EVM) trading",
   "version": "1.0.0",
   "ai": {
     "provider": "anthropic",
@@ -17,8 +17,8 @@
   "trading": {
     "enabled": true,
     "walletPath": "~/.openclaw/workspace/solana-wallet.json",
-    "rpcUrl": "https://api.mainnet-beta.solana.com",
-    "network": "mainnet-beta",
+    "rpcUrl": "https://mainnet.base.org",
+    "network": "base-mainnet",
     "maxPositionSize": 50,
     "riskLevel": "medium",
     "strategies": ["momentum", "breakout"],
@@ -27,7 +27,7 @@
   "monitoring": {
     "enabled": true,
     "interval": 30,
-    "sources": ["dexscreener", "jupiter"],
+    "sources": ["dexscreener", "uniswap"],
     "alerts": {
       "profitThreshold": 20,
       "lossThreshold": 10,

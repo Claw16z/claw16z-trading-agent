@@ -51,7 +51,7 @@ async function checkBalances() {
         console.log('Wallet Address:', keypair.publicKey.toString());
         console.log('');
         
-        // Check SOL balance
+        // Check SOL balance (legacy Solana-based balance check; for Base treat this as internal)
         const solBalance = await connection.getBalance(keypair.publicKey);
         const solBalanceFormatted = (solBalance / LAMPORTS_PER_SOL).toFixed(4);
         
@@ -76,7 +76,7 @@ async function checkBalances() {
         console.log('');
         
         // Check if wallet is funded
-        const minSol = 0.05;  // Minimum SOL needed
+        const minSol = 0.05;  // Minimum SOL needed (legacy threshold)
         const minUsdc = 10;   // Minimum USDC needed
         
         if (solBalance / LAMPORTS_PER_SOL >= minSol && usdcBalance >= minUsdc) {
@@ -140,12 +140,12 @@ if node /tmp/check-balance.js "$WALLET_FILE"; then
     echo
 else
     echo
-    echo -e "${YELLOW}💡 How to fund your wallet:${NC}"
-    echo "1. Send SOL and USDC to the address above"
+    echo -e "${YELLOW}💡 How to fund your wallet (for Base/EVM use):${NC}"
+    echo "1. Send ETH (on Base) and USDC to the address above"
     echo "2. Recommended amounts:"
-    echo "   • 0.1 SOL (for transaction fees)"
+    echo "   • 0.01–0.05 ETH (for transaction fees)"
     echo "   • \$50+ USDC (for trading)"
-    echo "3. Use any Solana wallet or exchange"
+    echo "3. Use any EVM wallet or exchange that supports the Base network"
     echo
     
     # Ask if user wants to wait for funding

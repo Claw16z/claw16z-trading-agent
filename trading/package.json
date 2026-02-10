@@ -1,16 +1,17 @@
 {
   "name": "claw16z-trading-agent",
   "version": "1.0.0",
-  "description": "Claw16z Trading Agent - Solana trading bot with Jupiter integration",
+  "description": "Claw16z Trading Agent - Base trading bot with Uniswap-style integration (simulated by default)",
   "main": "monitor.js",
   "scripts": {
     "start": "node monitor.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "solana",
+    "base",
+    "evm",
     "trading",
-    "jupiter",
+    "uniswap",
     "claw16z",
     "defi",
     "dex"
