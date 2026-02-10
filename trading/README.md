@@ -4,39 +4,35 @@ This directory contains the core trading logic for your Claw16z Trading Agent.
 
 ## How It Works
 
-The trading bot uses a momentum-based strategy:
+The trading bot uses a momentum-based strategy on the **Base** blockchain:
 
-1. **Market Scanning** - Monitors DexScreener for trending tokens
+1. **Market Scanning** - Monitors DexScreener for trending tokens on Base
 2. **Opportunity Detection** - Identifies tokens with strong momentum and volume
 3. **Risk Assessment** - Checks liquidity, market cap, and volatility
-4. **Trade Execution** - Uses Jupiter for optimal swap routing
-5. **Position Management** - Implements stop-losses and profit taking
+4. **Trade Simulation** - In `DRY_RUN` mode simulates swaps instead of sending real transactions
+5. **Position Management** - Implements stop-losses and profit taking (simulated)
 
 ## Components
 
 ### monitor.js
 The main trading loop that:
-- Scans DexScreener API every 30 seconds
+- Scans DexScreener API every 30 seconds for **Base** pairs
 - Filters tokens by volume, price change, and liquidity
-- Executes buy/sell decisions via Jupiter
+- Executes buy/sell decisions (simulated in `DRY_RUN` mode)
 - Logs all trades and maintains position state
 
 ### swap.js  
-Jupiter integration helper that:
-- Gets optimal swap quotes
-- Signs and submits transactions
-- Handles slippage and retry logic
-- Provides detailed trade logging
+Swap integration helper (currently used only for non-`DRY_RUN` modes and still Solana/Jupiter-specific).
+For **Base** the bot is intended to run in `DRY_RUN=true` mode, simulating entries and exits
+without sending real transactions. A dedicated Base DEX integration can be added here later.
 
 ## Configuration
 
 Create a `.env` file in this directory:
 
 ```bash
-# RPC Configuration
-RPC_URL=https://api.mainnet-beta.solana.com
-# For better performance, use Helius or QuickNode:
-# RPC_URL=https://mainnet.helius-rpc.com/?api-key=YOUR_KEY
+# RPC Configuration (Base mainnet by default)
+RPC_URL=https://mainnet.base.org
 
 # Trading Parameters
 POSITION_SIZE=10          # USDC per trade

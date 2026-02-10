@@ -11,7 +11,8 @@ class TradingMonitor {
     constructor() {
         this.config = {
             // RPC Configuration
-            rpcUrl: process.env.RPC_URL || 'https://api.mainnet-beta.solana.com',
+            // Default to Base mainnet RPC (can be overridden via RPC_URL env)
+            rpcUrl: process.env.RPC_URL || 'https://mainnet.base.org',
             
             // Trading Parameters
             positionSize: parseFloat(process.env.POSITION_SIZE) || 10, // USDC per trade
@@ -136,11 +137,11 @@ class TradingMonitor {
     }
 
     /**
-     * Get trending tokens from DexScreener
+     * Get trending tokens from DexScreener (Base chain)
      */
     async getTrendingTokens() {
         try {
-            // Try multiple endpoints to get Solana tokens
+            // Try multiple endpoints to get Base tokens
             let pairs = [];
             
             // First try: trending endpoint
@@ -155,15 +156,15 @@ class TradingMonitor {
                 console.log('⚠️ Trending endpoint returned no data, trying alternative...');
             }
             
-            // Fallback: get popular Solana tokens via pairs endpoint
-            if (pairs.length === 0 || !pairs.some(p => p.chainId === 'solana')) {
+            // Fallback: get popular Base tokens via pairs endpoint
+            if (pairs.length === 0 || !pairs.some(p => p.chainId === 'base')) {
                 try {
-                    // Use popular Solana token addresses to get pairs
+                    // Use popular Base token addresses to get pairs
                     const popularTokens = [
-                        'So11111111111111111111111111111111111111112', // SOL
-                        'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
-                        'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', // USDT
-                        '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // RAY
+                        // SOL on Base (DexScreener \"Solana\" token on Base)
+                        '0x311935Cd80B76769bF2ecC9D8Ab7635b2139cf82',
+                        // USDC on Base
+                        '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
                     ];
                     
                     // Try to get pairs for popular tokens
@@ -173,9 +174,9 @@ class TradingMonitor {
                                 timeout: 5000
                             });
                             if (tokenResponse.data?.pairs && Array.isArray(tokenResponse.data.pairs)) {
-                                const solanaPairs = tokenResponse.data.pairs
-                                    .filter(p => p.chainId === 'solana' && p.volume?.h24 > this.config.minVolume24h);
-                                pairs = pairs.concat(solanaPairs);
+                                const basePairs = tokenResponse.data.pairs
+                                    .filter(p => p.chainId === 'base' && p.volume?.h24 > this.config.minVolume24h);
+                                pairs = pairs.concat(basePairs);
                             }
                         } catch (e) {
                             // Continue to next token
@@ -199,9 +200,9 @@ class TradingMonitor {
                 return [];
             }
             
-            // Process and filter tokens
+            // Process and filter tokens for Base chain
             return pairs
-                .filter(pair => pair.chainId === 'solana')
+                .filter(pair => pair.chainId === 'base')
                 .map(pair => ({
                     address: pair.baseToken.address,
                     symbol: pair.baseToken.symbol,
@@ -262,12 +263,30 @@ class TradingMonitor {
             const usdcAmount = this.config.positionSize * Math.pow(10, 6); // USDC has 6 decimals
             
             // Execute swap: USDC -> Token
-            const result = await this.swapper.swap(
-                'USDC',
-                token.address,
-                usdcAmount,
-                this.config.dryRun
-            );
+            // For Base we currently only support DRY_RUN mode, so we simulate the fill
+            let result;
+            if (this.config.dryRun) {
+                const simulatedAmount = token.price > 0
+                    ? this.config.positionSize / token.price
+                    : this.config.positionSize;
+                result = {
+                    signature: 'DRY_RUN',
+                    outputAmount: simulatedAmount,
+                    priceImpact: 0,
+                    executionTime: 0,
+                    timestamp: new Date().toISOString(),
+                    dryRun: true
+                };
+            } else {
+                // NOTE: Non-DRY_RUN execution is still Solana/Jupiter-specific in swap.js
+                // and would need a dedicated Base DEX integration to perform real trades.
+                result = await this.swapper.swap(
+                    'USDC',
+                    token.address,
+                    usdcAmount,
+                    this.config.dryRun
+                );
+            }
             
             // Record position
             const position = {
@@ -414,7 +433,7 @@ class TradingMonitor {
                 timeout: 5000
             });
             
-            const pair = response.data?.pairs?.find(p => p.chainId === 'solana');
+            const pair = response.data?.pairs?.find(p => p.chainId === 'base');
             if (!pair) return null;
             
             return {
